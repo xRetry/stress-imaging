@@ -1,0 +1,16 @@
+:host {
+    border: 2px solid dimgray;
+    display: block;
+    padding: 20px;
+    background-color: rgb(134, 134, 134);
+}
+
+
+#graph-container {
+    display: flex;
+    justify-content:space-evenly;
+    background-color: rgb(117, 103, 103);
+    margin: 0pt;
+    padding: 0;
+    width: 800pt;
+}

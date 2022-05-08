@@ -3,10 +3,12 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { VectorPlotComponent } from './vector-plot/vector-plot.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    VectorPlotComponent
   ],
   imports: [
     BrowserModule,

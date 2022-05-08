@@ -1,0 +1,13 @@
+<div id="param-form">
+    <label for="d-phi">Phasenverschiebung</label>
+    <input type="text" id="d-phi" value="{{d_phi}}" #dPhi>
+    <label for="phi-m">Messwinkel</label>
+    <input type="text" id="phi-m" value="{{phi_m}}" #phiM>
+    <label for="phi-sig">Hauptspannungswinkel</label>
+    <input type="text" id="phi-sig" value="{{phi_sig}}" #phiSig>
+    <button id="plot-btn" (click)="plotGraphs(dPhi.value, phiM.value, phiSig.value)">Animate</button>
+</div>
+<div id="graph-container">
+    <div id="vector-graph" #vectorGraph></div>
+    <div id="wave-graph" #waveGraph></div>
+</div>
