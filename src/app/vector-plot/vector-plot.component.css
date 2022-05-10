@@ -8,7 +8,8 @@
 
 #main-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content:left;
     background-color: rgb(196, 226, 251);
     margin: 0pt;
     padding: 30pt;
@@ -16,21 +17,25 @@
 
 #graph-container {
     display: flex;
+    flex-direction: column;
     justify-content: space-evenly;
     background-color: rgb(117, 103, 103);
     margin: 0pt;
     padding: 0;
     width: fit-content;
+    height: fit-content;
 }
 
 #param-form {
     display: flex;
     flex-direction: column;
-    margin-bottom: 30pt;
     background-color: white;
     width: fit-content;
+    height: fit-content;
     justify-content: center;
     padding: 10pt;
+    margin-right: 30pt;
+    margin-bottom: 30pt;
 }
 
 #plot-btn {

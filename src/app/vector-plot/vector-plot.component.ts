@@ -16,8 +16,8 @@ export class VectorPlotComponent implements OnInit {
   private _N_STEPS = 100;
   private _MAX_ANGLE = 4 * 360;
   phase_shift = 0;
-  angle_sig = 45;
-  angle_measure = 120;
+  angle_sig = 30;
+  angle_measure = 80;
   phase_shift_valid = true;
   angle_sig_valid = true;
   angle_measure_valid = true;
@@ -30,8 +30,9 @@ export class VectorPlotComponent implements OnInit {
   
   private layout_vectors = {
     autosize: false,
-    width: 500,
-    height: 500,
+    width: 700,
+    height: 700,
+    title: {text: 'Zeitauschnitt der Wellen'},
     xaxis: {range: [-1.05, 1.05]},
     yaxis: {range: [-1.05, 1.05], scaleanchor: 'x'},
     show_legend: true,
@@ -42,8 +43,9 @@ export class VectorPlotComponent implements OnInit {
     autosize: false,
     width: 700,
     height: 500,
-    xaxis: {range: [0, this._MAX_ANGLE]},
-    yaxis: {range: [-1.1, 1.1]}
+    title: {text: 'Zeitlicher Verlauf der Ausgangswelle'},
+    xaxis: {range: [0, this._MAX_ANGLE], title: 'Winkel [Deg]'},
+    yaxis: {range: [-1.1, 1.1], title: 'Amplitude'}
   };
 
   constructor(private _vecDataService: VecDataService) { }
@@ -127,13 +129,14 @@ export class VectorPlotComponent implements OnInit {
   }
 
   formatVectorData(vals: any) {
+    const line_width = 4;
     let angle_sig = deg2rad(this.angle_sig);
     let angle_measure = deg2rad(this.angle_measure);
     return [
-      {x: [0, vals.a0], y: [0, 0], type: "scatter", name: "Eingangswelle", mode: "lines", marker: {color: 'green'}},
-      {x: [0, vals.a1_sig*Math.cos(angle_sig)], y: [0, vals.a1_sig*Math.sin(angle_sig)], type: "scatter", name: "Hauptspannungsrichtung 1", mode: "lines", marker: {color: 'blue'}},
-      {x: [0, -vals.a2_sig*Math.sin(angle_sig)], y: [0, vals.a2_sig*Math.cos(angle_sig)], type: "scatter", name: "Hauptspannungsrichtung 2", mode: "lines", marker: {color: 'blue'}},
-      {x: [0, (vals.a1_m + vals.a2_m)*Math.cos(angle_measure)], y: [0, (vals.a1_m + vals.a2_m)*Math.sin(angle_measure)], type: "scatter", name: "Ausgangswelle", mode: "lines", marker: {color: 'red'}}
+      {x: [0, vals.a0], y: [0, 0], type: "scatter", name: "Eingangswelle", mode: "lines", line: {color: 'green', width: line_width}},
+      {x: [0, vals.a1_sig*Math.cos(angle_sig)], y: [0, vals.a1_sig*Math.sin(angle_sig)], type: "scatter", name: "Hauptspannungsrichtung 1", mode: "lines", line: {color: 'blue', width: line_width}},
+      {x: [0, -vals.a2_sig*Math.sin(angle_sig)], y: [0, vals.a2_sig*Math.cos(angle_sig)], type: "scatter", name: "Hauptspannungsrichtung 2", mode: "lines", line: {color: 'blue', width: line_width}},
+      {x: [0, (vals.a1_m + vals.a2_m)*Math.cos(angle_measure)], y: [0, (vals.a1_m + vals.a2_m)*Math.sin(angle_measure)], type: "scatter", name: "Ausgangswelle", mode: "lines", line: {color: 'red', width: line_width}}
     ];
   }
 
