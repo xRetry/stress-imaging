@@ -1,16 +1,55 @@
-:host {
+/* :host {
     border: 2px solid dimgray;
     display: block;
-    padding: 20px;
-    background-color: rgb(134, 134, 134);
-}
+    padding: 0px;
+    background-color: rgb(218, 218, 218);
+    margin: 0pt;
+} */
 
+#main-container {
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(196, 226, 251);
+    margin: 0pt;
+    padding: 30pt;
+}
 
 #graph-container {
     display: flex;
-    justify-content:space-evenly;
+    justify-content: space-evenly;
     background-color: rgb(117, 103, 103);
     margin: 0pt;
     padding: 0;
-    width: 800pt;
+    width: fit-content;
+}
+
+#param-form {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30pt;
+    background-color: white;
+    width: fit-content;
+    justify-content: center;
+    padding: 10pt;
+}
+
+#plot-btn {
+    width: fit-content;
+}
+
+.param-input {
+    margin-bottom: 7pt;
+    width: 100pt;
+    border-style: solid;
+}
+
+.valid {
+    border-color: black;
+    border-width: 1pt;
+}
+
+.invalid {
+    border-color: red;
+    border-width: 2pt;
+    border-style: solid;
 }
