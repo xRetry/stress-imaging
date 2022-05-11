@@ -14,20 +14,19 @@ export class VectorPlotComponent implements OnInit {
   @ViewChild("vectorGraph", { static: false }) vectorGraph!: ElementRef;
   @ViewChild("waveGraph", { static: false }) waveGraph!: ElementRef;
   private _N_STEPS = 100;
-  private _MAX_ANGLE = 4 * 360;
+  private _MAX_ANGLE = 3 * 360;
   phase_shift = 0;
   angle_sig = 30;
   angle_measure = 80;
   phase_shift_valid = true;
   angle_sig_valid = true;
   angle_measure_valid = true;
-  private x_wave: number[] = [];
-  private y_wave: number[] = [];
+  private wave_measure: [number[], number[]] = [[], []];
+  private wave_sig1: [number[], number[]] = [[], []];
+  private wave_sig2: [number[], number[]] = [[], []];
   private _data_iterator: any;
- 
-  // private _data_vectors: any;
-  // private _data_wave: any;
   
+
   private layout_vectors = {
     autosize: false,
     width: 700,
@@ -43,9 +42,11 @@ export class VectorPlotComponent implements OnInit {
     autosize: false,
     width: 700,
     height: 500,
-    title: {text: 'Zeitlicher Verlauf der Ausgangswelle'},
-    xaxis: {range: [0, this._MAX_ANGLE], title: 'Winkel [Deg]'},
-    yaxis: {range: [-1.1, 1.1], title: 'Amplitude'}
+    title: {text: 'Zeitlicher Verlauf der Wellenamplituden'},
+    xaxis: {range: [0, this._MAX_ANGLE]},
+    yaxis: {range: [-1.1, 1.1], title: 'Amplitude'},
+    show_legend: true,
+    legend: {"orientation": "h"}
   };
 
   constructor(private _vecDataService: VecDataService) { }
@@ -70,7 +71,7 @@ export class VectorPlotComponent implements OnInit {
       this.layout_wave
     );
   
-    this.update();
+    this.update(true);
   }
 
   verifyInput(key: string, value_str: string) {
@@ -100,12 +101,13 @@ export class VectorPlotComponent implements OnInit {
       }
     }
     this.requestSingleData();
-    this.update();
+    this.update(true);
   }
 
   requestAllData() {
-    this.x_wave = [];
-    this.y_wave = [];
+    this.wave_measure = [[], []];
+    this.wave_sig1 = [[], []];
+    this.wave_sig2 = [[], []];
     this._data_iterator = this._vecDataService.getSimData(this._MAX_ANGLE, this._N_STEPS, this.phase_shift, this.angle_sig, this.angle_measure).entries();
   }
 
@@ -124,7 +126,7 @@ export class VectorPlotComponent implements OnInit {
       this.angle_measure = phi_m_new;
       this.angle_sig = phi_sig_new;
       this.requestAllData();
-      this.update();
+      this.update(true);
     }
   }
 
@@ -133,28 +135,40 @@ export class VectorPlotComponent implements OnInit {
     let angle_sig = deg2rad(this.angle_sig);
     let angle_measure = deg2rad(this.angle_measure);
     return [
+      {x: [-10*Math.cos(angle_measure), 10*Math.cos(angle_measure)], y: [-10*Math.sin(angle_measure), 10*Math.sin(angle_measure)], type: "scatter", name: "Analysatorstellung", mode: "lines", line: {color: 'black', width: line_width/2, dash: 'dot'}},
       {x: [0, vals.a0], y: [0, 0], type: "scatter", name: "Eingangswelle", mode: "lines", line: {color: 'green', width: line_width}},
       {x: [0, vals.a1_sig*Math.cos(angle_sig)], y: [0, vals.a1_sig*Math.sin(angle_sig)], type: "scatter", name: "Hauptspannungsrichtung 1", mode: "lines", line: {color: 'blue', width: line_width}},
       {x: [0, -vals.a2_sig*Math.sin(angle_sig)], y: [0, vals.a2_sig*Math.cos(angle_sig)], type: "scatter", name: "Hauptspannungsrichtung 2", mode: "lines", line: {color: 'blue', width: line_width}},
-      {x: [0, (vals.a1_m + vals.a2_m)*Math.cos(angle_measure)], y: [0, (vals.a1_m + vals.a2_m)*Math.sin(angle_measure)], type: "scatter", name: "Ausgangswelle", mode: "lines", line: {color: 'red', width: line_width}}
+      {x: [0, (vals.a1_m + vals.a2_m)*Math.cos(angle_measure)], y: [0, (vals.a1_m + vals.a2_m)*Math.sin(angle_measure)], type: "scatter", name: "Ausgangswelle", mode: "lines", line: {color: 'red', width: line_width}},
     ];
   }
 
   formatWaveData(vals: any) {
     let angle_step = this._MAX_ANGLE / this._N_STEPS;
-    this.x_wave.push(angle_step * this.x_wave.length);
-    this.y_wave.push(vals.a1_m + vals.a2_m);
+    let angle_current = angle_step * this.wave_measure[0].length;
+    this.wave_sig1[0].push(angle_current);
+    this.wave_sig1[1].push(vals.a1_sig);
+    this.wave_sig2[0].push(angle_current);
+    this.wave_sig2[1].push(-vals.a2_sig);
+    this.wave_measure[0].push(angle_current);
+    this.wave_measure[1].push(vals.a1_m + vals.a2_m);
     return [
-      {x: this.x_wave, y: this.y_wave, type: 'scatter', mode: 'lines', marker: {color: 'red'}}
+      {x: this.wave_sig1[0], y: this.wave_sig1[1], type: 'scatter', mode: 'lines', name: 'Hauptspannungsrichtung 1', marker: {color: 'blue'}},
+      {x: this.wave_sig2[0], y: this.wave_sig2[1], type: 'scatter', mode: 'lines', name: 'Hauptspannungsrichtung 2', marker: {color: 'blue'}},
+      {x: this.wave_measure[0], y: this.wave_measure[1], type: 'scatter', mode: 'lines', name: 'Ausgangswelle', marker: {color: 'red'}},
     ];
   }
 
-  update(this: any) {
+  update(this: any, is_single: boolean) {
     let iter_item = this._data_iterator.next();
     
     if (!iter_item.done) {
       let data_vectors = this.formatVectorData(iter_item.value[1]);
-      let data_wave = this.formatWaveData(iter_item.value[1]);
+      let data_wave = [];
+      
+      if (!is_single) {
+         data_wave = this.formatWaveData(iter_item.value[1]);
+      }
       
       Plotly.animate(
         this.vectorGraph.nativeElement, 
@@ -167,7 +181,7 @@ export class VectorPlotComponent implements OnInit {
           },
           frame: {
             duration: 0,
-            redraw: false 
+            redraw: is_single 
           }
         }
       );
@@ -183,14 +197,14 @@ export class VectorPlotComponent implements OnInit {
           },
           frame: {
             duration: 0,
-            redraw: false
+            redraw: is_single
           }
         }
       );
 
       let fps = 25;
       setTimeout(
-        () => requestAnimationFrame(this.update.bind(this)),
+        () => requestAnimationFrame(this.update.bind(this, false)),
         1000/fps
       ); 
     }

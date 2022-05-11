@@ -27,9 +27,10 @@ export class VecDataService {
   }
 
   evaluate(angle_current: number, phase_shift: number, angle_sig: number, angle_measure: number) {
-    let a0 = Math.cos(angle_current);
-    let a1_sig = a0 * Math.cos(angle_sig);
-    let a2_sig = a0 * -Math.sin(angle_sig) * Math.cos(phase_shift);
+    let a0 = 1;
+    let a1_sig = a0 * Math.cos(angle_sig) * Math.cos(angle_current);
+    let a2_sig = a0 * -Math.sin(angle_sig) * Math.cos(angle_current + phase_shift);
+    a0 = Math.cos(angle_current);
     let a1_m = a1_sig * Math.cos(angle_measure - angle_sig);
     let a2_m = a2_sig * Math.sin(angle_measure - angle_sig);
 
@@ -40,7 +41,7 @@ export class VecDataService {
       a1_m,
       a2_m,
     }
-
+    
     return step
   }
 }

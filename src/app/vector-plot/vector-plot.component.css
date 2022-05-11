@@ -1,29 +1,49 @@
 /* :host {
+    display: flex;
+    flex-direction: row;
     border: 2px solid dimgray;
     display: block;
-    padding: 0px;
-    background-color: rgb(218, 218, 218);
+    padding: 30px;
+    background-color:  rgb(226, 236, 253);
+    justify-content: left;
     margin: 0pt;
+    gap: 30pt;
 } */
 
 #main-container {
     display: flex;
     flex-direction: row;
     justify-content:left;
-    background-color: rgb(196, 226, 251);
+    background-color: rgb(226, 236, 253);
     margin: 0pt;
     padding: 30pt;
+    gap: 30pt;
+}
+
+@media all and (max-width: 800px) {
+  #main-container {
+    /* On small screens, we are no longer using row direction but column */
+    flex-direction: column;
+  }
 }
 
 #graph-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-evenly;
-    background-color: rgb(117, 103, 103);
+    /* background-color: rgb(226, 236, 253); */
+    background-color: white;
     margin: 0pt;
     padding: 0;
     width: fit-content;
     height: fit-content;
+}
+
+@media all and (max-width: 1300px) {
+  #graph-container {
+    /* On small screens, we are no longer using row direction but column */
+    flex-direction: column;
+  }
 }
 
 #param-form {
@@ -34,8 +54,8 @@
     height: fit-content;
     justify-content: center;
     padding: 10pt;
-    margin-right: 30pt;
-    margin-bottom: 30pt;
+    /* margin-right: 30pt; */
+    /* margin-bottom: 30pt; */
 }
 
 #plot-btn {
